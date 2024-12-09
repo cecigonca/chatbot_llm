@@ -1,13 +1,18 @@
-from gpt4all import GPT4All
+import google.generativeai as genai
 import os
 
-caminho_modelo = "./models/gpt4all-lora-quantized.bin"
-
-if not os.path.exists(caminho_modelo):
-    raise FileNotFoundError("Modelo não encontrado em {caminho_modelo}.")
+genai.api_key = os.getenv("GEMINI_API_KEY")
 
 def resposta_pergunta(prompt, contexto):
-    modelo = GPT4All(model_name="gpt4all-lora-quantized", model_path=caminho_modelo)
-    mensagem = f"Você é um especialista em normas de segurança industrial. \n\nContexto: {contexto}\n\npergunta: {prompt}"
-    resposta = modelo.generate(mensagem)
-    return resposta.strip()
+    try:
+        prompt_unificado = (
+            "Você é um especialista em normas de segurança industrial.\n"
+            f"Contexto: {contexto}\n\n"
+            f"Pergunta: {prompt}"
+        )
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        resposta = model.generate_content(prompt_unificado)   
+        
+        return resposta.text.strip()
+    except Exception as e:
+        return f"Erro ao gerar a resposta: {e}"
