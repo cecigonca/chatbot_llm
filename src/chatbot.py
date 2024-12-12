@@ -6,7 +6,7 @@ genai.api_key = os.getenv("GEMINI_API_KEY")
 def resposta_pergunta(prompt, contexto):
     try:
         prompt_unificado = (
-            "Você é um especialista em normas de segurança industrial.\n"
+            "Você é um especialista em normas de segurança industrial. Responda de forma clara e objetiva, com base exclusivamente no contexto fornecido. Não invente informações.\n"
             f"Contexto: {contexto}\n\n"
             f"Pergunta: {prompt}"
         )
