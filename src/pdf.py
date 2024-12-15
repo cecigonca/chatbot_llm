@@ -22,3 +22,5 @@ def carregar_pdf(caminho_ou_url):
         return "Erro: Arquivo PDF não encontrado."
     except Exception as e:
         return f"Erro ao processar o PDF: {e}"
+    
+    

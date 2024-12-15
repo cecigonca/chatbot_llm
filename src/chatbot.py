@@ -1,6 +1,9 @@
 import google.generativeai as genai
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
+print(os.getenv("GEMINI_API_KEY")) 
 genai.api_key = os.getenv("GEMINI_API_KEY")
 
 def resposta_pergunta(prompt, contexto):
@@ -10,7 +13,7 @@ def resposta_pergunta(prompt, contexto):
             f"Contexto: {contexto}\n\n"
             f"Pergunta: {prompt}"
         )
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("models/gemini-1.5-pro")
         resposta = model.generate_content(prompt_unificado)   
         
         return resposta.text.strip()
