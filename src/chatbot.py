@@ -9,30 +9,25 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 def criar_llama_index():
-    llm = Gemini(model= "models/gemini-1.5-pro") # Modelo LLM do Gemini
-
+    llm = Gemini(model= "models/gemini-1.5-pro")
     embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
     documents = SimpleDirectoryReader(input_files=["data/normas_seguranca.pdf"]).load_data()
-
     index = VectorStoreIndex.from_documents(documents, embed_model=embed_model) # Criar o índice vetorial
 
-    # Ajustar as configurações globais do LlamaIndex
     Settings.llm = llm
     Settings.embed_model = embed_model
-
     return index
 
 def resposta_pergunta(llama_index, prompt):
     try:
-        # Ajustar query_engine para recuperar mais trechos
+        # query_engine para recuperar mais trechos
         query_engine = llama_index.as_query_engine(
             response_mode="no_text",
             similarity_top_k=8  # Recuperar até 8 trechos para aumentar o contexto disponível
         )
         response = query_engine.query(prompt)
 
-        # Obter trechos relevantes
+        # trechos relevantes
         relevant_texts = [node.node.text for node in response.source_nodes]
 
         if not relevant_texts:
@@ -48,7 +43,7 @@ def resposta_pergunta(llama_index, prompt):
 
         prompt_unificado = f"{SISTEMA_PROMPT}CONTEXTO:\n{contexto}\n\nPERGUNTA: {prompt}\nRESPOSTA:"
 
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-1.5-pro")
         resposta_llm = model.generate_content(prompt_unificado)
 
         return resposta_llm.text.strip()
