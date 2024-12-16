@@ -10,8 +10,8 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 def criar_llama_index():
     llm = Gemini(model= "models/gemini-1.5-pro")
-    embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
     documents = SimpleDirectoryReader(input_files=["data/normas_seguranca.pdf"]).load_data()
+    embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
     index = VectorStoreIndex.from_documents(documents, embed_model=embed_model) # Criar o índice vetorial
 
     Settings.llm = llm
