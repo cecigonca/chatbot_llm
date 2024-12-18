@@ -1,10 +1,16 @@
 import sys
 import os
+import time
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import streamlit as st
 from src.chatbot import criar_llama_index, resposta_pergunta
+
+def gerar_resposta_com_streaming(resposta_completa, delay=0.05):
+    for caractere in resposta_completa:
+        yield caractere  # Retorna um caractere por vez
+        time.sleep(delay)  # Atraso para efeito de digitação
 
 def rodar_interface():
     st.title("Chatbot Normas de Segurança")
@@ -51,7 +57,12 @@ def rodar_interface():
                 if not resposta or resposta.startswith("Erro"):
                     st.error("Ocorreu um erro ao gerar a resposta. Tente novamente.")
                 else:
-                    st.markdown(f"**Chatbot:** {resposta}")
+                    response_placeholder = st.empty()
+                    streamed_response = ""
+                    for token in gerar_resposta_com_streaming(resposta, delay=0.01):
+                        streamed_response += token
+                        # Atualizar a resposta no placeholder
+                        response_placeholder.write(f"**Chatbot:** {streamed_response}")
 
         st.session_state.messages.append({"role": "Usuário", "content": prompt})
         st.session_state.messages.append({"role": "Chatbot", "content": resposta})
